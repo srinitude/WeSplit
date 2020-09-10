@@ -38,11 +38,23 @@ struct ContentView: View {
                 }
                 
                 Section {
-                    Text("\(checkAmount)")
+                    Text("\(totalPerPerson, specifier: "%.2f")")
                 }
             }
             .navigationBarTitle("WeSplit")
         }
+    }
+    
+    var totalPerPerson: Double {
+        let peopleCount = Double(numberOfPeople + 2)
+        let tipSelection = Double(tipPercentages[tipPercentage])
+        let orderAmount = Double(checkAmount) ?? 0
+        
+        let tipValue = orderAmount * (tipSelection / 100)
+        let grandTotal = orderAmount + tipValue
+        let amountPerPerson = grandTotal / peopleCount
+        
+        return amountPerPerson
     }
 }
 
