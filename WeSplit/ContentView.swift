@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var checkAmount = ""
-    @State private var numberOfPeople = 2
+    @State private var numberOfPeople = ""
     @State private var tipPercentage = 2
     private let tipPercentages = [0, 10, 15, 20, 25]
     
@@ -21,11 +21,8 @@ struct ContentView: View {
                     TextField("Amount", text: $checkAmount)
                         .keyboardType(.decimalPad)
 
-                    Picker("Number of people", selection: $numberOfPeople) {
-                        ForEach(2 ..< 100) {
-                            Text("\($0) people")
-                        }
-                    }
+                    TextField("Number of people", text: $numberOfPeople)
+                        .keyboardType(.decimalPad)
                 }
                 
                 Section(header: Text("How much tip do you want to leave?")) {
@@ -37,22 +34,32 @@ struct ContentView: View {
                     .pickerStyle(SegmentedPickerStyle())
                 }
                 
-                Section {
-                    Text("\(totalPerPerson, specifier: "%.2f")")
+                Section(header: Text("Amount per person")) {
+                    Text("$\(totalPerPerson, specifier: "%.2f")")
+                }
+                
+                Section(header: Text("Overall total")) {
+                    Text("$\(overallTotal, specifier: "%.2f")")
                 }
             }
             .navigationBarTitle("WeSplit")
         }
     }
     
-    var totalPerPerson: Double {
-        let peopleCount = Double(numberOfPeople + 2)
+    var overallTotal: Double {
         let tipSelection = Double(tipPercentages[tipPercentage])
         let orderAmount = Double(checkAmount) ?? 0
         
         let tipValue = orderAmount * (tipSelection / 100)
         let grandTotal = orderAmount + tipValue
-        let amountPerPerson = grandTotal / peopleCount
+        
+        return grandTotal
+    }
+    
+    var totalPerPerson: Double {
+        let numberOfPeopleDouble = Double(numberOfPeople) ?? 0
+        let peopleCount = numberOfPeopleDouble + Double(2)
+        let amountPerPerson = overallTotal / peopleCount
         
         return amountPerPerson
     }
